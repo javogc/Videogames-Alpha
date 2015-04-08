@@ -1,2 +1,0 @@
-# SpaceInvaders
-Juego de SpaceInvaders

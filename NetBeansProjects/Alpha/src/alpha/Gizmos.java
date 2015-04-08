@@ -21,10 +21,17 @@ public class Gizmos {
     
     private double iX;     //posicion en x.       
     private double iY;     //posicion en y.
-    private int iAncho; //ancho del objeto
-    private int iAlto; //largo del objeto
-    private Image imaImagen;	//imagen.
+    private int iWidth; //ancho del objeto
+    private int iHeight; //largo del objeto
+    private Image imgImage;	//imagen.
     
+    public Gizmos (double iX, double iY, int iWidth, int iHeight, Image imgImage) {
+            this.iX = iX;
+            this.iY = iY;
+            this.iWidth = iWidth;
+            this.iHeight = iHeight;
+            this.imgImage = imgImage;
+    }
     
     /**
      * setX
@@ -80,11 +87,11 @@ public class Gizmos {
      * Metodo modificador usado para cambiar el icono de imagen del Gizmo
      * tomandolo de un objeto imagen
      * 
-     * @param imaImagen es la <code>imagen</code> del objeto.
+     * @param imgImage es la <code>imagen</code> del objeto.
      * 
      */
-    public void setImagen(Image imaImagen) {
-        this.imaImagen = imaImagen;
+    public void setImagen(Image imgImage) {
+        this.imgImage = imgImage;
     }
 
     /**
@@ -96,31 +103,31 @@ public class Gizmos {
      * 
      */
     public Image getImagen() {
-        return imaImagen;
+        return imgImage;
     }
 
     /**
-     * getAncho
+     * getWidth
      * 
      * Metodo de acceso que regresa el ancho del icono 
      * 
      * @return un <code>entero</code> que es el ancho de la imagen del Gizmo.
      * 
      */
-    public int getAncho() {
-        return iAncho;
+    public int getWidth() {
+        return iWidth;
     }
 
     /**
-     * getAlto
+     * getHeight
      * 
      * Metodo que  da el alto del icono 
      * 
      * @return un <code>entero</code> que es el alto de la imagen del gIZMO.
      * 
      */
-    public int getAlto() {
-        return iAlto;
+    public int getHeight() {
+        return iHeight;
     }
     
     /**
@@ -134,7 +141,7 @@ public class Gizmos {
      * 
      */
     public void paint(Graphics graGrafico, ImageObserver imoObserver) {
-        graGrafico.drawImage(getImagen(), (int) getX(), (int) getY(), getAncho(), getAlto(), imoObserver);
+        graGrafico.drawImage(getImagen(), (int) getX(), (int) getY(), getWidth(), getHeight(), imoObserver);
     }
 
     
