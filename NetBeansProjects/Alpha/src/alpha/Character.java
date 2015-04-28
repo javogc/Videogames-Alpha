@@ -23,7 +23,7 @@ public class Character {
     private int iPosY;
     private int iAncho;
     private int iAlto;
-    private Image imaImagen;
+    private Animation aniPlayer;
     
     /**
      * Chaacter
@@ -40,12 +40,12 @@ public class Character {
      */
     
     public Character (int iPosX, int iPosY, int iAncho, int iAlto, 
-            Image imaImagen){
+            Animation aniPlayer){
         this.iPosX = iPosX;
         this.iPosY = iPosY;
         this.iAncho = iAncho;
         this.iAlto = iAlto;
-        this.imaImagen = imaImagen;      
+        this.aniPlayer = aniPlayer;
     }
     
     /**
@@ -105,8 +105,8 @@ public class Character {
      * @param imaImagen es la <code>imagen</code> del character.
      * 
      */
-    public void setImagen(Image imaImagen) {
-        this.imaImagen = imaImagen;
+    public void setAnimation(Animation aniPlayer) {
+        this.aniPlayer = aniPlayer;
     }
 
     /**
@@ -117,8 +117,8 @@ public class Character {
      * @return la imagen a partide del <code>icono</code> del objeto.
      * 
      */
-    public Image getImagen() {
-        return imaImagen;
+    public Animation getAnimation() {
+        return aniPlayer;
     }
 
     /**
@@ -156,7 +156,7 @@ public class Character {
      * 
      */
     public void paint(Graphics graGrafico, ImageObserver imoObserver) {
-        graGrafico.drawImage(getImagen(), (int) getX(), (int) getY(), getAncho(), getAlto(), imoObserver);
+        graGrafico.drawImage(aniPlayer.getImagen(), iPosX, iPosY, imoObserver);
     }
     
     /**
@@ -179,7 +179,7 @@ public class Character {
                     this.getY() == charParam.getY() &&
                     this.getAncho() == charParam.getAncho() &&
                     this.getAlto() == charParam.getAlto() &&
-                    this.getImagen() == charParam.getImagen();
+                    this.getAnimation() == charParam.getAnimation();
         }
         else {
             // se regresa un falso porque el objeto recibido no es tipo Base

@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
 /**
  *
@@ -25,20 +26,20 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
         
         int iLevel;
         
-        Image imgBackground;
-        Image imgTree;
-        Image imgApple;
-        Image imgPig;
-        Image imgBullet;
-        Image imgEgg;
-        Image imgRock;
-        Image imgWaterDrop;
-        Image imgGasoline;
-        Image imgTrash;
-        Image imgInstructions;
-        Image imgMenu;
-        Image imgLogo;
-        Image imgSlogan;
+        private Image imgBackground;
+        private Image imgTree;
+        private Image imgApple;
+        private Image imgPig;
+        private Image imgBullet;
+        private Image imgEgg;
+        private Image imgRock;
+        private Image imgWaterDrop;
+        private Image imgGasoline;
+        private Image imgTrash;
+        private Image imgInstructions;
+        private Image imgMenu;
+        private Image imgLogo;
+        private Image imgSlogan;
         
         private Animation aniPlayer1;
         private Animation aniPlayer2;
@@ -46,16 +47,24 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
         private Animation aniPlayer4;
         private long actualTime;
         private long initialTime;
-        int posX;
-        int posY;
+        private int posX;
+        private int posY;
+        private long l_elapsedTime;
+        private long l_actualTime;
+        private LinkedList<Gizmos> lklObstacles;
         
-        Character ctrPlayer;
-        Gizmos gzmToken;
-        Gizmos gzmObstacle;
+        private Character ctrPlayer;
+        private Gizmos gzmToken;
         
         /* objetos para manejar el buffer del Applet y este no parpadee */
         private Image    imaImagenApplet;   // Imagen a proyectar en Applet
         private Graphics graGraficaApplet;  // Objeto grafico de la Imagen
+        
+        private int iTemp;
+        private int iTemp2;
+        private int iYTemp;
+        
+        boolean bBrinca;
         
         Alpha() {
                 init();
@@ -64,6 +73,10 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
         }
         
         public void init() {
+                
+                Gizmos gzmObstacle;
+                
+                lklObstacles = new LinkedList();
                 
                 setSize (1000, 700);
                 
@@ -153,11 +166,22 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
                 
                 gzmObstacle = new Gizmos (400, 400, 200, 250, imgTree);
                 
+                int iCounter = 0;
+                
+                for (int iI = 0; iI < 20; iI++) {
+                        iCounter += 100;
+                        lklObstacles.add(gzmObstacle);
+                        gzmObstacle = new Gizmos (400 + iCounter, 400, 200, 250, imgTree);
+                }
+                
                 gzmToken = new Gizmos (800, 500, 100, 100, imgApple);
                 
                 posX = 50;
                 posY = 400;
                 
+                bBrinca = false;
+                
+                ctrPlayer = new Character (posX, posY, 100, 100, aniPlayer1);
                 
                 addKeyListener(this);
         }
@@ -184,11 +208,20 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
          **/
         public void run() {
                 actualTime = System.currentTimeMillis();
+                l_actualTime = System.currentTimeMillis();
                 /* mientras dure el juego, se actualizan posiciones de jugadores
                 se checa si hubo colisiones para desaparecer jugadores o corregir
                 movimientos y se vuelve a pintar todo
                 */
                 while (true) {
+                        l_elapsedTime = System.currentTimeMillis() - l_actualTime;
+                        l_elapsedTime /= 1000;
+//                        if (l_elapsedTime == 3) {
+//                                iLevel = 2;
+//                        }
+//                        else if (l_elapsedTime == 6) {
+//                                iLevel = 3;
+//                        }
                         update();
                         repaint();
                         try	{
@@ -204,11 +237,32 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
         
         public void update() {
                 long elapsedTime = System.currentTimeMillis() - actualTime;
+                
                 actualTime += elapsedTime;
                 aniPlayer1.actualiza(elapsedTime);
                 aniPlayer2.actualiza(elapsedTime);
                 aniPlayer3.actualiza(elapsedTime);
                 aniPlayer4.actualiza(elapsedTime);
+                
+                if (iLevel == 5) {
+                        
+                        gzmObstacle.setX(gzmObstacle.getX()-2);
+                }
+                
+                if (bBrinca) {
+                        jump(ctrPlayer, gzmObstacle);
+//                        iTemp2 = (int)l_elapsedTime - iTemp;
+//
+//                        if (iTemp2 < 2) {
+//                                ctrPlayer.setY(ctrPlayer.getY()-4);
+//                        }
+//                        else if (iTemp2 > 2 && ctrPlayer.getY() != iYTemp){
+//                                ctrPlayer.setY(ctrPlayer.getY()+4);
+//                        }
+//                        else if (iTemp2 > 3){
+//                                bBrinca = false;
+//                        }
+                }
                 
         }
         
@@ -262,11 +316,13 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
                                 }
                                 // Muestra en pantalla el cuadro actual de la animación
                                 if (aniPlayer1 != null) {
-                                        g.drawImage(aniPlayer1.getImagen(), posX, posY, this);
+                                        ctrPlayer.paint(g, this);
                                 }
                                 if(gzmToken != null && gzmObstacle != null){
-                                        gzmToken.paint(g, this);
-                                        gzmObstacle.paint(g, this);
+                                        for(Gizmos gzmObstacle: lklObstacles) {
+                                                //dibuja la imagen de Chimpy en el applet
+                                                gzmObstacle.paint(g, this);
+                                        }
                                 }
                                 break;
                                 
@@ -362,7 +418,29 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                         iLevel ++;
                 }
+                else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                        if (!bBrinca) {
+                                bBrinca = true;
+                                iTemp = (int)l_elapsedTime;
+                                iYTemp = ctrPlayer.getY();
+                        }
+                }
         }
+        
+        public void jump(Character ctrPlayer, Gizmos gzmObject) {
+                int iSeconds = (int)l_elapsedTime - iTemp;
+                int iJump = 150;
+                
+                if (ctrPlayer.getY() > iJump) {
+                        ctrPlayer.setY(iJump);
+                }
+                
+                else if (ctrPlayer.getY() == iJump && iSeconds == 2) {
+                        ctrPlayer.setY(iYTemp);
+                        bBrinca = false;
+                }
+        }
+        
         /**
          * @param args the command line arguments
          */
