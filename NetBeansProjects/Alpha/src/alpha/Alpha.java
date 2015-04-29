@@ -55,6 +55,7 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
         
         private Character ctrPlayer;
         private Gizmos gzmToken;
+        private Gizmos gzmObstacle;
         
         /* objetos para manejar el buffer del Applet y este no parpadee */
         private Image    imaImagenApplet;   // Imagen a proyectar en Applet
@@ -73,8 +74,6 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
         }
         
         public void init() {
-                
-                Gizmos gzmObstacle;
                 
                 lklObstacles = new LinkedList();
                 
@@ -169,7 +168,7 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
                 int iCounter = 0;
                 
                 for (int iI = 0; iI < 20; iI++) {
-                        iCounter += 100;
+                        iCounter += 500;
                         lklObstacles.add(gzmObstacle);
                         gzmObstacle = new Gizmos (400 + iCounter, 400, 200, 250, imgTree);
                 }
@@ -245,8 +244,9 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
                 aniPlayer4.actualiza(elapsedTime);
                 
                 if (iLevel == 5) {
-                        
-                        gzmObstacle.setX(gzmObstacle.getX()-2);
+                        for(Gizmos gzmObs: lklObstacles) {
+                                gzmObs.setX(gzmObstacle.getX()-2);
+                        }
                 }
                 
                 if (bBrinca) {
@@ -319,9 +319,9 @@ public class Alpha extends JFrame implements Runnable, KeyListener {
                                         ctrPlayer.paint(g, this);
                                 }
                                 if(gzmToken != null && gzmObstacle != null){
-                                        for(Gizmos gzmObstacle: lklObstacles) {
+                                        for(Gizmos gzmObs: lklObstacles) {
                                                 //dibuja la imagen de Chimpy en el applet
-                                                gzmObstacle.paint(g, this);
+                                                gzmObs.paint(g, this);
                                         }
                                 }
                                 break;
