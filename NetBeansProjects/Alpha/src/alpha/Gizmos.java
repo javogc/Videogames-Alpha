@@ -24,13 +24,39 @@ public class Gizmos {
     private int iWidth; //ancho del objeto
     private int iHeight; //largo del objeto
     private Image imgImage;	//imagen.
+    private int iPoints;
     
-    public Gizmos (double iX, double iY, int iWidth, int iHeight, Image imgImage) {
+    public Gizmos (double iX, double iY, int iWidth, int iHeight, Image imgImage, int iPoints) {
             this.iX = iX;
             this.iY = iY;
             this.iWidth = iWidth;
             this.iHeight = iHeight;
             this.imgImage = imgImage;
+            this.iPoints = iPoints;
+    }
+    
+    /**
+     * setPoints
+     * 
+     * Metodo modificador usado para cambiar la posicion en x del Gizmo
+     * 
+     * @param iX es la <code>posicion en x</code> del Gizmo.
+     * 
+     */
+    public void setPoints(int iPoints) {
+        this.iPoints = iPoints;
+    }
+    
+    /**
+     * getPoints
+     * 
+     * Metodo de acceso que regresa la posicion en x del Gizmo 
+     * 
+     * @return iPoints es la <code>posicion en x</code> del ogIZMO.
+     * 
+     */
+    public int getPoints() {
+            return iPoints;
     }
     
     /**

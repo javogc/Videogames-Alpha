@@ -195,14 +195,14 @@ public class Character {
       * @return un valor <code>String</code> que representa al objeto
      * 
      */
-    public boolean intersecta (Object objCharacter) {
+    public boolean intersecta (Object objGizmo) {
         //valido si el objeto es Character
-        if (objCharacter instanceof Character) {
+        if (objGizmo instanceof Gizmos) {
             //creo los rectangulos de ambos
             Rectangle rctEste = new Rectangle((int) this.getX(), (int) this.getY(), this.getAncho(), this.getAlto());
-            Character charTemp = (Character) objCharacter;
-            Rectangle rctParam = new Rectangle((int) charTemp.getX(), (int) charTemp.getY(), charTemp.getAncho(),
-                    charTemp.getAlto());
+            Gizmos gzmTemp = (Gizmos) objGizmo;
+            Rectangle rctParam = new Rectangle((int) gzmTemp.getX(), (int) gzmTemp.getY(), gzmTemp.getWidth(),
+                    gzmTemp.getHeight());
             
             return rctEste.intersects(rctParam);
         }
