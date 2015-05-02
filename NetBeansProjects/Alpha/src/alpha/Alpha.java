@@ -173,15 +173,35 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             iNewX = 100;
             
             for (int iJ = 0; iJ < 5; iJ++) {
-                gzm2 = new Gizmos (iNewX, 475, 100, 100,
+                if(iI == 2) {
+                gzm2 = new Gizmos (iNewX, 200, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
+                }
+                else {
+                    gzm2 = new Gizmos (iNewX, 475, 100, 100,
+                        Toolkit.getDefaultToolkit().getImage
+                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
+                }
                 
                 iNewX += 700;
                 
                 lklGizmos[iI].add(gzm2);
             }
         }
+        
+        for (int iI = 2; iI < 5; iI++) {
+            
+            for (int iJ = 0; iJ < 5; iJ++) {
+                gzm2 = new Gizmos (iNewX, 475, 100, 100,
+                        Toolkit.getDefaultToolkit().getImage
+                                            (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100);
+                
+                iNewX += 700;
+                
+                lklGizmos[3].add(gzm2);
+            }
+            }
         
         
     }
