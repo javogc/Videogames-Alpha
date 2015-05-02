@@ -28,8 +28,10 @@ public class Character {
 
     private Animation aniPlayer;
     
+    private Image imgPlayer;
+    
     /**
-     * Chaacter
+     * Character
      * 
      * Metodo constructor usado para crear el objeto principal
      * creando el icono a partir de una imagen
@@ -43,7 +45,7 @@ public class Character {
      */
     
     public Character (int iPosX, int iPosY, int iAncho, int iAlto, 
-            Animation aniPlayer, double dGrav, double dVel){
+            Animation aniPlayer, double dGrav, double dVel, Image imgPlayer){
         this.iPosX = (double)iPosX;
         this.iPosY = (double)iPosY;
         this.iAncho = iAncho;
@@ -51,6 +53,7 @@ public class Character {
         this.aniPlayer = aniPlayer;
         this.dGravity = dGrav;
         this.dVelocity = dVel;
+        this.imgPlayer = imgPlayer;
     }
     
     /**
@@ -134,6 +137,30 @@ public class Character {
         return aniPlayer;
     }
 
+   /**
+     * setImagen
+     * 
+     * Metodo modificador usado para cambiar el icono de imagen del character
+     * tomandolo de un objeto imagen
+     * 
+     * @param imaImagen es la <code>imagen</code> del character.
+     * 
+     */    
+    public void setImage(Image imgPlayer){
+        this.imgPlayer = imgPlayer;
+    }
+    
+   /**
+     * getImagen
+     * 
+     * Metodo de acceso que regresa la imagen que representa el icono del character
+     * 
+     * @return la imagen a partide del <code>icono</code> del objeto.
+     * 
+     */
+    public Image getImage() {
+        return imgPlayer;
+    }
     /**
      * getAncho
      * 
@@ -187,6 +214,10 @@ public class Character {
      */
     public void paint(Graphics graGrafico, ImageObserver imoObserver) {
         graGrafico.drawImage(aniPlayer.getImagen(), (int)iPosX, (int)iPosY, imoObserver);
+    }
+    
+    public void paintJump(Graphics graGrafico, ImageObserver imoObserver){
+        graGrafico.drawImage(imgPlayer, (int)iPosX, (int)iPosY, imoObserver);
     }
     
     /**

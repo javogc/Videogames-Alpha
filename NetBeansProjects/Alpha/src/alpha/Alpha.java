@@ -48,6 +48,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private boolean bPoints;
     private boolean bNextLevel;
+    private boolean bJump;
     
     private Image imgApplet;
     private Graphics graApplet;
@@ -80,6 +81,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         dAcceleration = 0.2;
         bPoints = false;
         bNextLevel = false;
+        bJump = false;
         initImages();
         addKeyListener(this);
     }
@@ -101,6 +103,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         //loading images for the animation of the main character
         Image [][] imgMan = new Image [4][8];
         Animation [] aniMan = new Animation[4];
+        Image [] imgJump = new Image [4];
         
         for (int iI = 0; iI < 4; iI++) {
             aniMan[iI] = new Animation();
@@ -114,11 +117,15 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 aniMan[iI].sumaCuadro(imgMan[iI][iJ], 100);
             }
         }
+        for (int iI = 0; iI < 4; iI++){
+            imgJump[iI] = Toolkit.getDefaultToolkit().getImage
+                                (this.getClass().getResource ("jumpLevel" + (iI+1) + ".png"));
+        }
         
         //creating the main characters for each level
         ctrMan = new Character [4];
         for (int iI = 0; iI < 4; iI++) {
-            ctrMan[iI] = new Character (50, 400, 100, 100, aniMan[iI], 9, 0);
+            ctrMan[iI] = new Character (50, 400, 100, 100, aniMan[iI], 9, 0, imgJump[iI]);
         }
         
         //loading images of the Gizmos, these include obstacles & tokens
@@ -278,6 +285,9 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             ctrMan[iLevel].setdVelocity(ctrMan[iLevel].getdVelocity() - 1);
             ctrMan[iLevel].setY(ctrMan[iLevel].getY() - ctrMan[iLevel].getdVelocity());
         }
+        else{
+            bJump = false;
+        }
     }
     
     /**
@@ -420,8 +430,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         gzmBack2.paint(graGraphic, this);
         
         //paint main character
-        ctrMan[iLevel].paint(graGraphic, this);
-       
+        if(!bJump){
+            ctrMan[iLevel].paint(graGraphic, this);
+        }
+        else{
+            ctrMan[iLevel].paintJump(graGraphic, this);
+        }
         
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
@@ -472,6 +486,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             iIntro++;
         }
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                bJump = true;
                 jump();
         }
     }
