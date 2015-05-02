@@ -19,10 +19,13 @@ import javax.swing.ImageIcon;
 
 public class Character {
 
-    private int iPosX;
-    private int iPosY;
+    private double iPosX;
+    private double iPosY;
+    private double dVelocity;
+    private double dGravity;
     private int iAncho;
     private int iAlto;
+
     private Animation aniPlayer;
     
     /**
@@ -40,12 +43,14 @@ public class Character {
      */
     
     public Character (int iPosX, int iPosY, int iAncho, int iAlto, 
-            Animation aniPlayer){
-        this.iPosX = iPosX;
-        this.iPosY = iPosY;
+            Animation aniPlayer, double dGrav, double dVel){
+        this.iPosX = (double)iPosX;
+        this.iPosY = (double)iPosY;
         this.iAncho = iAncho;
         this.iAlto = iAlto;
         this.aniPlayer = aniPlayer;
+        this.dGravity = dGrav;
+        this.dVelocity = dVel;
     }
     
     /**
@@ -57,6 +62,10 @@ public class Character {
      * 
      */
     public void setX(int iPosX) {
+        this.iPosX = (double)iPosX;
+    }
+    
+    public void setX(double iPosX) {
         this.iPosX = iPosX;
     }
 
@@ -68,7 +77,7 @@ public class Character {
      * @return iPosX es la <code>posicion en x</code> del character.
      * 
      */
-    public int getX() {
+    public double getX() {
             return iPosX;
     }
 
@@ -81,6 +90,10 @@ public class Character {
      * 
      */
     public void setY(int iPosY) {
+            this.iPosY = (double)iPosY;
+    }
+    
+    public void setY(double iPosY) {
             this.iPosY = iPosY;
     }
 
@@ -92,7 +105,7 @@ public class Character {
      * @return iPosY es la <code>posicion en y</code> del character.
      * 
      */
-    public int getY() {
+    public double getY() {
         return iPosY;
     }
 
@@ -144,6 +157,23 @@ public class Character {
     public int getAlto() {
         return iAlto;
     }
+
+    public double getdVelocity() {
+        return dVelocity;
+    }
+
+    public void setdVelocity(double dVelocity) {
+        this.dVelocity = dVelocity;
+    }
+
+    public double getdGravity() {
+        return dGravity;
+    }
+
+    public void setdGravity(double dGravity) {
+        this.dGravity = dGravity;
+    }
+
     
     /**
      * paint
@@ -156,7 +186,7 @@ public class Character {
      * 
      */
     public void paint(Graphics graGrafico, ImageObserver imoObserver) {
-        graGrafico.drawImage(aniPlayer.getImagen(), iPosX, iPosY, imoObserver);
+        graGrafico.drawImage(aniPlayer.getImagen(), (int)iPosX, (int)iPosY, imoObserver);
     }
     
     /**
