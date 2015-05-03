@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Random;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
@@ -31,6 +32,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private Gizmos gzmBack1;
     private Gizmos gzmBack2;
+    
+    private Animation aniIntro;
     
     private int iIntro;
     private int iLevel;
@@ -95,6 +98,21 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         //load background images to gizmos of background
         Image imgBackground = Toolkit.getDefaultToolkit().getImage
                                 (this.getClass().getResource ("backLevel1.jpg"));
+        
+        aniIntro = new Animation();
+        Image imgIntro;
+        
+        for (int iI = 0; iI < 10; iI++) {
+            imgIntro = Toolkit.getDefaultToolkit().getImage
+                                (this.getClass().getResource ("Logo_0000" + (iI) + ".jpg"));
+            aniIntro.sumaCuadro(imgIntro, 100);
+        }
+        
+        for (int iI = 10; iI < 60; iI++) {
+            imgIntro = Toolkit.getDefaultToolkit().getImage
+                                (this.getClass().getResource ("Logo_000" + (iI) + ".jpg"));
+            aniIntro.sumaCuadro(imgIntro, 100);
+        }
         
         //load background image to gizmos
         gzmBack1 = new Gizmos(0, 0, 4868, 900, imgBackground, 0);
@@ -242,6 +260,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             l_elapsedTime = System.currentTimeMillis() - l_actualTime;
             l_elapsedTime /= 1000;
             
+            if (iIntro == 0) {
+                updateIntro();
+            }
+            
             if (iIntro > 3) {
                 updateBackground();
                 
@@ -260,6 +282,13 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                         iexError.toString());
             }
         }
+    }
+    
+    public void updateIntro() {       
+        //update main character's animation
+        long elapsedTime = System.currentTimeMillis() - actualTime;
+        actualTime += elapsedTime;
+        aniIntro.actualiza(elapsedTime);
     }
     
     /**
@@ -459,10 +488,15 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     }
     
     public void paintIntro (Graphics graGraphic){
+        if (iIntro > 0) {
         //draws the intro image according to the intro phase
         graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
                                 (this.getClass().getResource("intro" + (iIntro+1) + ".png"))
                 , 0, 0, this);
+        }
+        else {
+            graGraphic.drawImage(aniIntro.getImagen(), 0, 0, this);
+        }
     }
     
     @Override
