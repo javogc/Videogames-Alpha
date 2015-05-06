@@ -10,6 +10,7 @@ package alpha;
  * @author javo
  */
 
+import java.applet.AudioClip;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -25,7 +26,7 @@ public class Gizmos {
     private int iHeight; //largo del objeto
     private Image imgImage;	//imagen.
     private int iPoints;
-    
+    private AudioClip auSound;
     
     public Gizmos (double iX, double iY, int iWidth, int iHeight, Image imgImage, int iPoints) {
             this.iX = iX;
@@ -36,17 +37,32 @@ public class Gizmos {
             this.iPoints = iPoints;
     }
     
-    /**
-     * setPoints
+     /**
+     * getAuSound
      * 
-     * Metodo modificador usado para cambiar la posicion en x del Gizmo
+     * Metodo de acceso que regresa el sonido del Gizmo 
      * 
-     * @param iX es la <code>posicion en x</code> del Gizmo.
+     * @return auSound es el <code>sonido</code> del Gizmo.
      * 
      */
-    public void setPoints(int iPoints) {
-        this.iPoints = iPoints;
+    
+     public AudioClip getAuSound() {
+        return auSound;
     }
+
+       /**
+     * setAuSound
+     * 
+     * Metodo modificador usado para cambiar el sonido del Gizmo
+     * 
+     * @param auSound es el <code>sonido x</code> del Gizmo.
+     * 
+     */
+     
+    public void setAuSound(AudioClip auSound) {
+        this.auSound = auSound;
+    }
+    
     
     /**
      * getPoints

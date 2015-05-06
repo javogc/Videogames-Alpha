@@ -40,7 +40,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private int iIntro;
     private int iLevel;
-    private int iTemp;
+    private int iTemp; 
     private int iYTemp;
     private int iPoints;
     private int iVelocity;
