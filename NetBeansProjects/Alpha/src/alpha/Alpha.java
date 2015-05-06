@@ -43,6 +43,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     private int iPoints; // points counter
     private int iVelocity; // velocity counter
     private int iSeconds; // seconds counter
+    private int iMaxPoints;// max points integer
     
     private double dAcceleration; // acceleration counter
     
@@ -95,6 +96,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         bPause  = false; //init pause bool 
         bGameOver = false; // init game over bool
         initImages(); 
+
         addKeyListener(this);
         
         
@@ -289,7 +291,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             }
             
             // update images according to the iIntro counter
-            if (iIntro > 3) {
+            if (iIntro > 0) {
                 updateBackground();
                 
                 //start music
@@ -407,6 +409,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(arrCtrMan[iLevel].intersecta(gGizmo)){
                 addPoints(gGizmo);
+
+                if(iPoints < -500) {
+                    bGameOver = true;
+                }
                 iRandNum = iMinimum + (int)(Math.random()*iMaximum) + iTemp;
                 iTemp = iRandNum;
                 gGizmo.setX(iRandNum);
@@ -426,13 +432,9 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     public void addPoints (Gizmos gGizmo) {
         //add points according to gizmos value
         iPoints += gGizmo.getPoints();
-        if (iPoints >= 300 && (iLevel < 3)) {
+        if (iPoints >= iMaxPoints && (iLevel < 3)) {
             bNextLevel = true;
             nextLevel();
-        }
-        //set game over bool on 
-        if(iLevel == 3 && iPoints >=300) {
-            bGameOver = true;
         }
     }
     
@@ -445,8 +447,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         //update level
         iSeconds = 0;
         iPoints = 0;
+        iMaxPoints += 500;
         if (iLevel < 3){
             iLevel++;
+            iVelocity+=2;
             gzmBack1.setImagen(Toolkit.getDefaultToolkit().getImage
                                                                                     (this.getClass().getResource("backLevel" + (iLevel+1)
                                                                                             + ".jpg")));
@@ -476,20 +480,24 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             graApplet = imgApplet.getGraphics ();
         }
         
+        if(iIntro < 1) {
         //Update the background image
-        graApplet.setColor(Color.BLACK);
+        graApplet.setColor(Color.WHITE);
+        }
+        else {
+            graApplet.setColor(Color.BLACK);
+        }
         graApplet.fillRect(0, 0, this.getSize().width, this.getSize().height);
         
         //Update the foreground images
         graApplet.setColor(getForeground());
         
-        // paint intro when intro counter is < 4
-        if (iIntro < 4) {
+        // paint intro when intro counter is < 1
+        if (iIntro < 1) {
             paintIntro(graApplet);
         }
         
-        // paint levels
-        else if (!bNextLevel && !bGameOver) {
+        else if (iIntro >= 1 && !bNextLevel && !bGameOver) {
             paint1(graApplet);
         }
         
@@ -544,12 +552,22 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         if (bPause) {
             paintPause(graApplet);
         }
+        if(iLevel == 0 && iSeconds < 200) {
+            paintInstructions(graApplet);
+        }
         graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 24));
         graGraphic.setColor(Color.white);
         graGraphic.drawString("Puntos: " + iPoints, 675, 50);
     }
     
-    public void paintNextLevel (Graphics graGraphic){
+    public void paintInstructions(Graphics graGraphic) {
+        iSeconds++;
+        graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 30));
+        graGraphic.setColor(Color.white);
+        graGraphic.drawString("Click SPACE to jump, don't harm the environment!", 100, 670);
+    }
+    
+    public void paintNextLevel (Graphics graGraphic) {
         iSeconds++;
         gzmBack1.paint(graGraphic, this);
         gzmBack2.paint(graGraphic, this);
@@ -566,6 +584,9 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     public void paintIntro (Graphics graGraphic){
             graGraphic.drawImage(aniIntro.getImagen(), 0, 0, this);
+            graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 30));
+            graGraphic.setColor(Color.black);
+            graGraphic.drawString("Click ENTER", 800, 670);
     }
     
     public void paintGameOver (Graphics graGraphic) {
