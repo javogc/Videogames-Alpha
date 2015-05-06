@@ -423,7 +423,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      */
     public void addPoints (Gizmos gGizmo) {
         iPoints += gGizmo.getPoints();
-        if (iPoints >= 400 && (iLevel < 3)) {
+        if (iPoints >= iMaxPoints && (iLevel < 3)) {
             bNextLevel = true;
             nextLevel();
         }
@@ -437,6 +437,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     public void nextLevel() {
         iSeconds = 0;
         iPoints = 0;
+        iMaxPoints += 500;
         if (iLevel < 3){
             iLevel++;
             iVelocity+=2;
