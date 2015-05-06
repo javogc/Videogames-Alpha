@@ -26,6 +26,7 @@ public class Gizmos {
     private Image imgImage;	//imagen.
     private int iPoints;
     
+    
     public Gizmos (double iX, double iY, int iWidth, int iHeight, Image imgImage, int iPoints) {
             this.iX = iX;
             this.iY = iY;

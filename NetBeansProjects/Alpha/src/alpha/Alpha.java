@@ -1,5 +1,7 @@
 package alpha;
 
+import java.applet.AudioClip;
+import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -7,6 +9,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,9 +51,13 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private boolean bPoints;
     private boolean bNextLevel;
+    private boolean bMusica;
     
     private Image imgApplet;
     private Graphics graApplet;
+    
+    private AudioClip auSoundTrack;
+    private AudioClip auPoint;
     
     /**
      *
@@ -82,6 +89,19 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         bNextLevel = false;
         initImages();
         addKeyListener(this);
+        
+        
+        
+        //Cargar sonido del juego
+        
+        URL URLSoundTrack = this.getClass().getResource("soundtrack.wav");
+        
+        auSoundTrack =  Applet.newAudioClip(URLSoundTrack);
+        
+        
+        URL URLPoints = this.getClass().getResource("points.wav");
+        auPoint = Applet.newAudioClip(URLPoints);
+                
     }
     
     /**
@@ -157,9 +177,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             iNewX = 700;
             
             for (int iJ = 0; iJ < 5; iJ++) {
+                if(iI == 1){
+                    gzm1 = new Gizmos (iNewX, 375, 200, 125, 
+                            Toolkit.getDefaultToolkit().getImage
+                          (this.getClass().getResource("gizmoLevel2-1.png")), -100);
+                }
+                else {
                 gzm1 = new Gizmos (iNewX, 375, 200, 200,
                         Toolkit.getDefaultToolkit().getImage
                                                     (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100);
+                }
+                
                 
                 iNewX += 700;
                 
@@ -218,6 +246,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         Thread th = new Thread (this);
         //Start thread
         th.start ();
+        
     }
     
     @Override
@@ -235,9 +264,15 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             l_elapsedTime = System.currentTimeMillis() - l_actualTime;
             l_elapsedTime /= 1000;
             
+                        
             if (iIntro > 3) {
                 updateBackground();
                 
+                if (!bMusica){
+                    
+                    bMusica = true;
+                    playMusic();
+                }
                 if (!bNextLevel) {
                     updateCharacters();
                     collision();
@@ -323,6 +358,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(ctrMan[iLevel].intersecta(gGizmo)){
                 addPoints(gGizmo);
+                auPoint.play();
                 gGizmo.setX(iNewX);
                 iNewX2 += 300;
             }
@@ -444,6 +480,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 , 70, 210, this);
     }
     
+    public void playMusic (){
+        
+        auSoundTrack.play();
+        
+    }
+    
     public void paintIntro (Graphics graGraphic){
         //draws the intro image according to the intro phase
         graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
@@ -491,4 +533,6 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         Alpha game = new Alpha();
         game.setVisible(true);
     }
+
+
 }
