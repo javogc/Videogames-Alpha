@@ -106,10 +106,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         URL URLSoundTrack = this.getClass().getResource("soundtrack.wav");
         
         auSoundTrack =  Applet.newAudioClip(URLSoundTrack);
-        
-        
-        URL URLPoints = this.getClass().getResource("points.wav");
-        auPoint = Applet.newAudioClip(URLPoints);
+          
                 
     }
     
@@ -139,8 +136,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         }
         
         //load background image to gizmos
-        gzmBack1 = new Gizmos(0, 0, 4868, 900, imgBackground, 0);
-        gzmBack2 = new Gizmos(4868, 0, 4868, 900, imgBackground, 0);
+        gzmBack1 = new Gizmos(0, 0, 4868, 900, imgBackground, 0, null);
+        gzmBack2 = new Gizmos(4868, 0, 4868, 900, imgBackground, 0, null);
         
         //loading images for the animation of the main character
         Image [][] imgMan = new Image [4][8];
@@ -205,12 +202,14 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 if(iI == 1){
                     gzm1 = new Gizmos (randNum, 375, 200, 125, 
                             Toolkit.getDefaultToolkit().getImage
-                          (this.getClass().getResource("gizmoLevel2-1.png")), -100);
+                          (this.getClass().getResource("gizmoLevel2-1.png")), -100, 
+                            Applet.newAudioClip(this.getClass().getResource("audioLevel2-1.wav")));
                 }
                 else {
                 gzm1 = new Gizmos (randNum, 375, 200, 200,
                         Toolkit.getDefaultToolkit().getImage
-                                                    (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100);
+                                                    (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100,    
+                        Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-1.wav")));
                 }
                 
                 
@@ -227,12 +226,14 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 if(iI == 2) {
                 gzm2 = new Gizmos (randNum, 200, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
-                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
+                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100,
+                        
+                        Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-2.wav")));
                 }
                 else {
-                    gzm2 = new Gizmos (randNum, 475, 100, 100,
-                        Toolkit.getDefaultToolkit().getImage
-                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
+                    gzm2 = new Gizmos (randNum, 475, 100, 100, Toolkit.getDefaultToolkit().getImage
+                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 
+                            100, Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-2.wav")));
                 }
                 
                 lklGizmos[iI].add(gzm2);
@@ -246,7 +247,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 randNum = minimum + (int)(Math.random()*maximum) + iTemp;
                 gzm2 = new Gizmos (randNum, 475, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
-                                            (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100);        
+                                            (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100, 
+                        Applet.newAudioClip(this.getClass().getResource("audioLevel4-" + (iI+1) + ".wav")));        
                 lklGizmos[3].add(gzm2);
             }
             }
@@ -408,7 +410,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 randNum = minimum + (int)(Math.random()*maximum) + iTemp;
                 iTemp = randNum;
                 gGizmo.setX(randNum);
-                auPoint.play();
+                gGizmo.getAuSound().play();
+                
             }
         }
     }

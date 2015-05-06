@@ -28,13 +28,14 @@ public class Gizmos {
     private int iPoints;
     private AudioClip auSound;
     
-    public Gizmos (double iX, double iY, int iWidth, int iHeight, Image imgImage, int iPoints) {
+    public Gizmos (double iX, double iY, int iWidth, int iHeight, Image imgImage, int iPoints, AudioClip auSound) {
             this.iX = iX;
             this.iY = iY;
             this.iWidth = iWidth;
             this.iHeight = iHeight;
             this.imgImage = imgImage;
             this.iPoints = iPoints;
+            this.auSound = auSound;
     }
     
      /**
