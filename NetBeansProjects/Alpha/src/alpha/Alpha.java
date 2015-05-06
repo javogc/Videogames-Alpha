@@ -105,16 +105,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         
         URL URLSoundTrack = this.getClass().getResource("soundtrack.wav"); 
         
-<<<<<<< HEAD
-        auSoundTrack =  Applet.newAudioClip(URLSoundTrack);
           
-=======
         auSoundTrack =  Applet.newAudioClip(URLSoundTrack); // 
         
         
         URL URLPoints = this.getClass().getResource("points.wav");
         auPoint = Applet.newAudioClip(URLPoints);
->>>>>>> d9d761d58e9488e7f0a5667103cae8d1c604821a
                 
     }
     
@@ -238,15 +234,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                         Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-2.wav")));
                 }
                 else {
-<<<<<<< HEAD
-                    gzm2 = new Gizmos (randNum, 475, 100, 100, Toolkit.getDefaultToolkit().getImage
-                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 
-                            100, Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-2.wav")));
-=======
                     gzm2 = new Gizmos (iRandNum, 475, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
-                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
->>>>>>> d9d761d58e9488e7f0a5667103cae8d1c604821a
+                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100, 
+                            Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-2.wav")));
                 }
                 
                 lklGizmos[iI].add(gzm2);
@@ -429,18 +420,11 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 if(iPoints < -500) {
                     bGameOver = true;
                 }
-<<<<<<< HEAD
-                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
-                iTemp = randNum;
-                gGizmo.setX(randNum);
-                gGizmo.getAuSound().play();
-                
-=======
+
                 iRandNum = iMinimum + (int)(Math.random()*iMaximum) + iTemp;
                 iTemp = iRandNum;
                 gGizmo.setX(iRandNum);
                 auPoint.play();
->>>>>>> d9d761d58e9488e7f0a5667103cae8d1c604821a
             }
         }
     }
