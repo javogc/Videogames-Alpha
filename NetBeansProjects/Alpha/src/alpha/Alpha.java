@@ -12,7 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Random;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
@@ -37,7 +36,6 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private int iIntro;
     private int iLevel;
-    private int iTemp;
     private int iYTemp;
     private int iPoints;
     private int iVelocity;
@@ -77,7 +75,6 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         setSize (1000, 700);
         iIntro = 0;
         iLevel = 0;
-        iTemp = 0;
         iPoints = 0;
         iSeconds = 0;
         iVelocity = 10;
@@ -167,26 +164,20 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             }
         }
         
-        Random r = new Random();
-        int Low = 10;
-        int High = 100;
-        int R = 50;
-        
-        int iNewX = 700;
+        int minimum = 1000, maximum = 3000, iTemp = 0;
+        int randNum = 0;
         
         lklGizmos = new LinkedList [4];
         Gizmos gzm1, gzm2;
         
-        for (int iI = 0; iI < 4; iI++) {
-            
-            iNewX = 700;
-            
+        for (int iI = 0; iI < 4; iI++) {    
+            iTemp = randNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
-                gzm1 = new Gizmos (iNewX, 375, 200, 200,
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                iTemp = randNum;
+                gzm1 = new Gizmos (randNum, 375, 200, 200,
                         Toolkit.getDefaultToolkit().getImage
                                                     (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100);
-                
-                iNewX += 700;
                 
                 if (lklGizmos[iI] == null) {
                     lklGizmos[iI] = new LinkedList<Gizmos>();
@@ -194,36 +185,33 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 
                 lklGizmos[iI].add(gzm1);
             }
-            
-            iNewX = 100;
-            
+            iTemp = randNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
+                iTemp = (int)lklGizmos[iI].get(iJ).getX();
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
                 if(iI == 2) {
-                gzm2 = new Gizmos (iNewX, 200, 100, 100,
+                gzm2 = new Gizmos (randNum, 200, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
                 }
                 else {
-                    gzm2 = new Gizmos (iNewX, 475, 100, 100,
+                    gzm2 = new Gizmos (randNum, 475, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
                 }
-                
-                iNewX += 700;
                 
                 lklGizmos[iI].add(gzm2);
             }
         }
         
         for (int iI = 2; iI < 5; iI++) {
-            
+            iTemp = randNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
-                gzm2 = new Gizmos (iNewX, 475, 100, 100,
+                iTemp = randNum;
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                gzm2 = new Gizmos (randNum, 475, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
-                                            (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100);
-                
-                iNewX += 700;
-                
+                                            (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100);        
                 lklGizmos[3].add(gzm2);
             }
             }
@@ -344,29 +332,32 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * Method <I>collision</I>
      **/
     public void collision() {
-        int iNewX = this.getWidth() + 100;
+        int iTemp = 0, randNum, minimum, maximum;
+        minimum = 1000;
+        maximum = 3000;
         
         //update gizmos x-position
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(gGizmo.getX() + gGizmo.getWidth() < 0){
-                gGizmo.setX(iNewX);
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                iTemp = randNum;
+                gGizmo.setX(randNum);
             }
-            iNewX += 300;
         }
         
-        int iNewX2 = this.getWidth() + 100;
+        iTemp = 0;
         
         //add points to user according to the item he/she collided with
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(ctrMan[iLevel].intersecta(gGizmo)){
                 addPoints(gGizmo);
-                gGizmo.setX(iNewX);
-                iNewX2 += 300;
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                iTemp = randNum;
+                gGizmo.setX(randNum);
             }
         }
-        
     }
     
     /**
@@ -488,15 +479,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     }
     
     public void paintIntro (Graphics graGraphic){
-        if (iIntro > 0) {
-        //draws the intro image according to the intro phase
-        graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
-                                (this.getClass().getResource("intro" + (iIntro+1) + ".png"))
-                , 0, 0, this);
-        }
-        else {
             graGraphic.drawImage(aniIntro.getImagen(), 0, 0, this);
-        }
     }
     
     @Override
