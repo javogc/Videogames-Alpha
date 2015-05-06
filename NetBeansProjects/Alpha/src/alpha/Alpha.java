@@ -1,5 +1,7 @@
 package alpha;
 
+import java.applet.AudioClip;
+import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -7,6 +9,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,10 +52,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private boolean bPoints;
     private boolean bNextLevel;
+    private boolean bMusica;
     private boolean bJump;
+    private boolean bPause;
+    private boolean bGameOver;
+
     
     private Image imgApplet;
     private Graphics graApplet;
+    
+    private AudioClip auSoundTrack;
+    private AudioClip auPoint;
     
     /**
      *
@@ -82,8 +92,23 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         bPoints = false;
         bNextLevel = false;
         bJump = false;
+        bPause  = false;
+        bGameOver = false;
         initImages();
         addKeyListener(this);
+        
+        
+        
+        //Cargar sonido del juego
+        
+        URL URLSoundTrack = this.getClass().getResource("soundtrack.wav");
+        
+        auSoundTrack =  Applet.newAudioClip(URLSoundTrack);
+        
+        
+        URL URLPoints = this.getClass().getResource("points.wav");
+        auPoint = Applet.newAudioClip(URLPoints);
+                
     }
     
     /**
@@ -175,9 +200,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             for (int iJ = 0; iJ < 5; iJ++) {
                 randNum = minimum + (int)(Math.random()*maximum) + iTemp;
                 iTemp = randNum;
+                if(iI == 1){
+                    gzm1 = new Gizmos (randNum, 375, 200, 125, 
+                            Toolkit.getDefaultToolkit().getImage
+                          (this.getClass().getResource("gizmoLevel2-1.png")), -100);
+                }
+                else {
                 gzm1 = new Gizmos (randNum, 375, 200, 200,
                         Toolkit.getDefaultToolkit().getImage
                                                     (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100);
+                }
+                
                 
                 if (lklGizmos[iI] == null) {
                     lklGizmos[iI] = new LinkedList<Gizmos>();
@@ -231,6 +264,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         Thread th = new Thread (this);
         //Start thread
         th.start ();
+        
     }
     
     @Override
@@ -255,23 +289,35 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             if (iIntro > 3) {
                 updateBackground();
                 
-                if (!bNextLevel) {
+                if (!bMusica){
+                    
+                    bMusica = true;
+                    playMusic();
+                }
+                if (!bNextLevel && !bPause && !bGameOver) {
                     updateCharacters();
                     collision();
                 }
             }
-            repaint();
-            try {
-                //The thread sleeps
-                Thread.sleep (20);
-            }
-            catch (InterruptedException iexError) {
-                System.out.println("Hubo un error en el juego " +
-                        iexError.toString());
-            }
+                            repaint();
+                try {
+                    //The thread sleeps
+                    Thread.sleep (20);
         }
+                    catch (InterruptedException iexError) {
+                    System.out.println("Hubo un error en el juego " + iexError.toString());
+                                }
+        }
+
     }
-    
+
+   /**
+     * updateIntro
+     *
+     * Method <I>updateIntro</I><P>
+     * In this method the intro images are updated. It's an indefinite cycle
+     * that repaints the objects that are shown on screen.
+     **/
     public void updateIntro() {       
         //update main character's animation
         long elapsedTime = System.currentTimeMillis() - actualTime;
@@ -314,15 +360,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      */
     public void updateBackground() {
         //move background
-        gzmBack1.setX(gzmBack1.getX() - iVelocity);
-        gzmBack2.setX(gzmBack2.getX() - iVelocity);
-        
-        if(gzmBack1.getX() + gzmBack1.getWidth() < 0){
-            gzmBack1.setX(gzmBack1.getWidth()-4);
-        }
-        
-        if(gzmBack2.getX() + gzmBack2.getWidth() < 0){
-            gzmBack2.setX(gzmBack1.getWidth()-4);
+        if (!bPause){
+            gzmBack1.setX(gzmBack1.getX() - iVelocity);
+            gzmBack2.setX(gzmBack2.getX() - iVelocity);
+
+            if(gzmBack1.getX() + gzmBack1.getWidth() < 0){
+                gzmBack1.setX(gzmBack1.getWidth()-4);
+            }
+
+            if(gzmBack2.getX() + gzmBack2.getWidth() < 0){
+                gzmBack2.setX(gzmBack1.getWidth()-4);
+            }
         }
     }
     
@@ -356,6 +404,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 randNum = minimum + (int)(Math.random()*maximum) + iTemp;
                 iTemp = randNum;
                 gGizmo.setX(randNum);
+                auPoint.play();
             }
         }
     }
@@ -370,9 +419,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      */
     public void addPoints (Gizmos gGizmo) {
         iPoints += gGizmo.getPoints();
-        if (iPoints >= 300 && !bNextLevel) {
+        if (iPoints >= 300 && (iLevel < 3)) {
             bNextLevel = true;
             nextLevel();
+        }
+        if(iLevel == 3 && iPoints >=300) {
+            bGameOver = true;
         }
     }
     
@@ -382,16 +434,20 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * Method <I> nextLevel </I> if called when the character has made it to the next level
      */
     public void nextLevel() {
-        iLevel++;
         iSeconds = 0;
         iPoints = 0;
-        
-        gzmBack1.setImagen(Toolkit.getDefaultToolkit().getImage
-                                                                                (this.getClass().getResource("backLevel" + (iLevel+1)
-                                                                                        + ".jpg")));
-        gzmBack2.setImagen(Toolkit.getDefaultToolkit().getImage
-                                                                               (this.getClass().getResource("backLevel" + (iLevel+1) 
-                                                                                       + ".jpg")));
+        if (iLevel < 3){
+            iLevel++;
+            gzmBack1.setImagen(Toolkit.getDefaultToolkit().getImage
+                                                                                    (this.getClass().getResource("backLevel" + (iLevel+1)
+                                                                                            + ".jpg")));
+            gzmBack2.setImagen(Toolkit.getDefaultToolkit().getImage
+                                                                                   (this.getClass().getResource("backLevel" + (iLevel+1) 
+                                                                                           + ".jpg")));
+        }
+        if (iLevel == 3) {
+            bNextLevel = false;
+        }
     }
     
     @Override
@@ -421,7 +477,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             paintIntro(graApplet);
         }
         
-        else if (!bNextLevel) {
+        else if (!bNextLevel && !bGameOver) {
             paint1(graApplet);
         }
         
@@ -431,6 +487,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             if (iSeconds >= 150) {
                 bNextLevel = false;
             }
+        }
+        
+        else if (bGameOver) {
+            paintGameOver(graApplet);
         }
         
         //Paint updated images
@@ -462,7 +522,9 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             //paint gizmos
             gGizmo.paint(graGraphic, this);
         }
-        
+        if (bPause) {
+            paintPause(graApplet);
+        }
         graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 24));
         graGraphic.setColor(Color.white);
         graGraphic.drawString("Puntos: " + iPoints, 675, 50);
@@ -478,8 +540,30 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 , 70, 210, this);
     }
     
+    public void playMusic (){
+        
+        auSoundTrack.play();
+        
+    }
+    
     public void paintIntro (Graphics graGraphic){
             graGraphic.drawImage(aniIntro.getImagen(), 0, 0, this);
+    }
+    
+    public void paintGameOver (Graphics graGraphic) {
+            graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
+                                    (this.getClass().getResource("gameover.jpg")),0,0,this);
+            graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 72));
+            graGraphic.setColor(Color.white);
+            graGraphic.drawString("Puntos: " + iPoints, 500, 350);
+    }
+    
+    public void paintPause (Graphics graGraphic) {
+        if(bPause) {
+            graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 72));
+            graGraphic.setColor(Color.white);
+            graGraphic.drawString("PAUSA", 500, 350);
+        }
     }
     
     @Override
@@ -503,8 +587,13 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             iIntro++;
         }
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if(!bPause){
                 bJump = true;
                 jump();
+            }
+        }
+        if (e.getKeyCode() == KeyEvent.VK_P) {
+            bPause = !bPause;
         }
     }
     
@@ -523,4 +612,6 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         Alpha game = new Alpha();
         game.setVisible(true);
     }
+
+
 }
