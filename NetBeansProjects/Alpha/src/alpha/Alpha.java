@@ -28,49 +28,49 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      *
      * @globalVariables
      */
-    private Character[] ctrMan;
+    private Character[] arrCtrMan; // array of class character
     
-    private LinkedList<Gizmos>[] lklGizmos;
+    private LinkedList<Gizmos>[] lklGizmos; // gizmos linked list
     
-    private Gizmos gzmBack1;
-    private Gizmos gzmBack2;
+    private Gizmos gzmBack1; // background 1
+    private Gizmos gzmBack2; // background 2
     
-    private Animation aniIntro;
+    private Animation aniIntro; // intro's animation
     
-    private int iIntro;
-    private int iLevel;
-    private int iYTemp;
-    private int iPoints;
-    private int iVelocity;
-    private int iSeconds;
-    private int iMaxPoints;
+    private int iIntro; // intro's counter
+    private int iLevel; // level counter
+    private int iYTemp; // temporal Y integer
+    private int iPoints; // points counter
+    private int iVelocity; // velocity counter
+    private int iSeconds; // seconds counter
+    private int iMaxPoints;// max points integer
     
-    private double dAcceleration;
+    private double dAcceleration; // acceleration counter
     
-    private long actualTime;
-    private long l_elapsedTime;
-    private long l_actualTime;
+    private long actualTime; // machine actual time
+    private long l_elapsedTime; // machine elapsed time
+    private long l_actualTime; // actual time
     
-    private boolean bPoints;
-    private boolean bNextLevel;
-    private boolean bMusica;
-    private boolean bJump;
-    private boolean bPause;
-    private boolean bGameOver;
+    private boolean bPoints; // boolea to add or rest points
+    private boolean bNextLevel; // boolean for level chage
+    private boolean bMusica; // boolean to play music
+    private boolean bJump;// boolean to jump
+    private boolean bPause; // boolean to pause
+    private boolean bGameOver; //game over boolean
 
     
-    private Image imgApplet;
-    private Graphics graApplet;
+    private Image imgApplet; // image to paint
+    private Graphics graApplet; //graphic to paint
     
-    private AudioClip auSoundTrack;
-    private AudioClip auPoint;
+    private AudioClip auSoundTrack; // audio clip of soundtrack
+    private AudioClip auPoint; //audio clip for points
     
     /**
      *
      * @constructor
      */
     Alpha() {
-        init();
+        init(); 
         start();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -83,30 +83,38 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * game to work
      */
     public void init() {
-        setSize (1000, 700);
-        iIntro = 0;
-        iLevel = 0;
-        iPoints = 0;
-        iSeconds = 0;
-        iVelocity = 10;
-        iMaxPoints = 400;
-        dAcceleration = 0.2;
-        bPoints = false;
-        bNextLevel = false;
-        bJump = false;
-        bPause  = false;
-        bGameOver = false;
-        initImages();
+        setSize (1000, 700); // screen size
+        iIntro = 0; // init intro counter
+        iLevel = 0;// init level counter
+        iPoints = 0;// init point counter
+        iSeconds = 0; //init secods counter
+        iVelocity = 10; // init velocity 
+        dAcceleration = 0.2; // init acceleration
+        bPoints = false; // init points bool
+        bNextLevel = false; // init next level bool
+        bJump = false; // init jump bool
+        bPause  = false; //init pause bool 
+        bGameOver = false; // init game over bool
+        initImages(); 
+
         addKeyListener(this);
         
         
         
-        //Cargar sonido del juego
+        //load game sounds
         
-        URL URLSoundTrack = this.getClass().getResource("soundtrack.wav");
+        URL URLSoundTrack = this.getClass().getResource("soundtrack.wav"); 
         
+<<<<<<< HEAD
         auSoundTrack =  Applet.newAudioClip(URLSoundTrack);
           
+=======
+        auSoundTrack =  Applet.newAudioClip(URLSoundTrack); // 
+        
+        
+        URL URLPoints = this.getClass().getResource("points.wav");
+        auPoint = Applet.newAudioClip(URLPoints);
+>>>>>>> d9d761d58e9488e7f0a5667103cae8d1c604821a
                 
     }
     
@@ -140,35 +148,35 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         gzmBack2 = new Gizmos(4868, 0, 4868, 900, imgBackground, 0, null);
         
         //loading images for the animation of the main character
-        Image [][] imgMan = new Image [4][8];
-        Animation [] aniMan = new Animation[4];
-        Image [] imgJump = new Image [4];
+        Image [][] matImgMan = new Image [4][8];
+        Animation [] arrMan = new Animation[4];
+        Image [] arrJump = new Image [4];
         
         for (int iI = 0; iI < 4; iI++) {
-            aniMan[iI] = new Animation();
+            arrMan[iI] = new Animation();
         }
         
         for (int iI = 0; iI < 4; iI++) {
             for (int iJ = 0; iJ < 8; iJ++) {
-                imgMan[iI][iJ] = Toolkit.getDefaultToolkit().getImage
+                matImgMan[iI][iJ] = Toolkit.getDefaultToolkit().getImage
                                 (this.getClass().getResource ("manLevel" + (iI+1) + "-"
                                         + (iJ+1) + ".png"));
-                aniMan[iI].sumaCuadro(imgMan[iI][iJ], 100);
+                arrMan[iI].sumaCuadro(matImgMan[iI][iJ], 100);
             }
         }
         for (int iI = 0; iI < 4; iI++){
-            imgJump[iI] = Toolkit.getDefaultToolkit().getImage
+            arrJump[iI] = Toolkit.getDefaultToolkit().getImage
                                 (this.getClass().getResource ("jumpLevel" + (iI+1) + ".png"));
         }
         
         //creating the main characters for each level
-        ctrMan = new Character [4];
+        arrCtrMan = new Character [4];
         for (int iI = 0; iI < 4; iI++) {
-            ctrMan[iI] = new Character (50, 400, 100, 100, aniMan[iI], 9, 0, imgJump[iI]);
+            arrCtrMan[iI] = new Character (50, 400, 100, 100, arrMan[iI], 9, 0, arrJump[iI]);
         }
         
         //loading images of the Gizmos, these include obstacles & tokens
-        Image [][] imgGizmo = new Image[4][6];
+        Image [][] matImgGizmo = new Image[4][6];
         Path pTemp;
         boolean bPath = true;
         
@@ -181,37 +189,36 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                     break;
                 }
                 else {
-                    imgGizmo[iI][iJ] = Toolkit.getDefaultToolkit().getImage
+                    matImgGizmo[iI][iJ] = Toolkit.getDefaultToolkit().getImage
                                     (this.getClass().getResource("gizmoLevel" + (iI+1) + "-"
                                             + (iJ+1) + ".png"));
                 }
             }
         }
         
-        int minimum = 1000, maximum = 3000, iTemp = 0;
-        int randNum = 0;
+        int iMinimum = 1000, iMaximum = 3000, iTemp = 0;
+        int iRandNum = 0;
         
         lklGizmos = new LinkedList [4];
         Gizmos gzm1, gzm2;
         
         for (int iI = 0; iI < 4; iI++) {    
-            iTemp = randNum = 0;
+            iTemp = iRandNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
-                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
-                iTemp = randNum;
+                iRandNum = iMinimum + (int)(Math.random()*iMaximum) + iTemp;
+                iTemp = iRandNum;
                 if(iI == 1){
-                    gzm1 = new Gizmos (randNum, 375, 200, 125, 
+                    gzm1 = new Gizmos (iRandNum, 375, 200, 125, 
                             Toolkit.getDefaultToolkit().getImage
                           (this.getClass().getResource("gizmoLevel2-1.png")), -100, 
                             Applet.newAudioClip(this.getClass().getResource("audioLevel2-1.wav")));
                 }
                 else {
-                gzm1 = new Gizmos (randNum, 375, 200, 200,
+                gzm1 = new Gizmos (iRandNum, 375, 200, 200,
                         Toolkit.getDefaultToolkit().getImage
                                                     (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100,    
                         Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-1.wav")));
                 }
-                
                 
                 if (lklGizmos[iI] == null) {
                     lklGizmos[iI] = new LinkedList<Gizmos>();
@@ -219,21 +226,27 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 
                 lklGizmos[iI].add(gzm1);
             }
-            iTemp = randNum = 0;
+            iTemp = iRandNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
                 iTemp = (int)lklGizmos[iI].get(iJ).getX();
-                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                iRandNum = iMinimum + (int)(Math.random()*iMaximum) + iTemp;
                 if(iI == 2) {
-                gzm2 = new Gizmos (randNum, 200, 100, 100,
+                gzm2 = new Gizmos (iRandNum, 200, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100,
                         
                         Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-2.wav")));
                 }
                 else {
+<<<<<<< HEAD
                     gzm2 = new Gizmos (randNum, 475, 100, 100, Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 
                             100, Applet.newAudioClip(this.getClass().getResource("audioLevel" + (iI+1) + "-2.wav")));
+=======
+                    gzm2 = new Gizmos (iRandNum, 475, 100, 100,
+                        Toolkit.getDefaultToolkit().getImage
+                                            (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
+>>>>>>> d9d761d58e9488e7f0a5667103cae8d1c604821a
                 }
                 
                 lklGizmos[iI].add(gzm2);
@@ -241,11 +254,11 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         }
         
         for (int iI = 2; iI < 5; iI++) {
-            iTemp = randNum = 0;
+            iTemp = iRandNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
-                iTemp = randNum;
-                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
-                gzm2 = new Gizmos (randNum, 475, 100, 100,
+                iTemp = iRandNum;
+                iRandNum = iMinimum + (int)(Math.random()*iMaximum) + iTemp;
+                gzm2 = new Gizmos (iRandNum, 475, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100, 
                         Applet.newAudioClip(this.getClass().getResource("audioLevel4-" + (iI+1) + ".wav")));        
@@ -280,23 +293,29 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * that repaints the objects that are shown on screen.
      **/
     public void run() {
+        // set times
         actualTime = System.currentTimeMillis();
         l_actualTime = System.currentTimeMillis();
         while (true) {
+            //set elapsed time
             l_elapsedTime = System.currentTimeMillis() - l_actualTime;
             l_elapsedTime /= 1000;
             
+            //update intro image when its 0
             if (iIntro == 0) {
                 updateIntro();
             }
             
+            // update images according to the iIntro counter
             if (iIntro > 0) {
                 updateBackground();
                 
+                //start music
                 if (!bMusica){
                     bMusica = true;
                     playMusic();
                 }
+                // update characters
                 if (!bNextLevel && !bPause && !bGameOver) {
                     updateCharacters();
                     collision();
@@ -309,7 +328,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         }
                     catch (InterruptedException iexError) {
                     System.out.println("Hubo un error en el juego " + iexError.toString());
-                                }
+                    }
         }
 
     }
@@ -338,7 +357,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         //update main character's animation
         long elapsedTime = System.currentTimeMillis() - actualTime;
         actualTime += elapsedTime;
-        ctrMan[iLevel].getAnimation().actualiza(elapsedTime);
+        arrCtrMan[iLevel].getAnimation().actualiza(elapsedTime);
         
         //update gizmos x-position
         for(Object objGizmo: lklGizmos[iLevel]) {
@@ -347,11 +366,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         }
         
         //jumping
-        if(ctrMan[iLevel].getY() < 400) {
-            ctrMan[iLevel].setdVelocity(ctrMan[iLevel].getdVelocity() - 1);
-            ctrMan[iLevel].setY(ctrMan[iLevel].getY() - ctrMan[iLevel].getdVelocity());
+        if(arrCtrMan[iLevel].getY() < 400) {
+            arrCtrMan[iLevel].setdVelocity(arrCtrMan[iLevel].getdVelocity() - 1);
+            arrCtrMan[iLevel].setY(arrCtrMan[iLevel].getY() - arrCtrMan[iLevel].getdVelocity());
         }
         else{
+            //turn of jump bool
             bJump = false;
         }
     }
@@ -383,17 +403,18 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * Method <I>collision</I>
      **/
     public void collision() {
-        int iTemp = 0, randNum, minimum, maximum;
-        minimum = 1000;
-        maximum = 3000;
+        //set min and max
+        int iTemp = 0, iRandNum, iMinimum, iMaximum;
+        iMinimum = 1000;
+        iMaximum = 3000;
         
         //update gizmos x-position
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(gGizmo.getX() + gGizmo.getWidth() < 0){
-                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
-                iTemp = randNum;
-                gGizmo.setX(randNum);
+                iRandNum = iMinimum + (int)(Math.random()*iMaximum) + iTemp;
+                iTemp = iRandNum;
+                gGizmo.setX(iRandNum);
             }
         }
         
@@ -402,16 +423,24 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         //add points to user according to the item he/she collided with
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
-            if(ctrMan[iLevel].intersecta(gGizmo)){
+            if(arrCtrMan[iLevel].intersecta(gGizmo)){
                 addPoints(gGizmo);
+
                 if(iPoints < -500) {
                     bGameOver = true;
                 }
+<<<<<<< HEAD
                 randNum = minimum + (int)(Math.random()*maximum) + iTemp;
                 iTemp = randNum;
                 gGizmo.setX(randNum);
                 gGizmo.getAuSound().play();
                 
+=======
+                iRandNum = iMinimum + (int)(Math.random()*iMaximum) + iTemp;
+                iTemp = iRandNum;
+                gGizmo.setX(iRandNum);
+                auPoint.play();
+>>>>>>> d9d761d58e9488e7f0a5667103cae8d1c604821a
             }
         }
     }
@@ -425,8 +454,9 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * @param gGizmo 
      */
     public void addPoints (Gizmos gGizmo) {
+        //add points according to gizmos value
         iPoints += gGizmo.getPoints();
-        if (iPoints >= 400 && (iLevel < 3)) {
+        if (iPoints >= iMaxPoints && (iLevel < 3)) {
             bNextLevel = true;
             nextLevel();
         }
@@ -438,8 +468,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * Method <I> nextLevel </I> if called when the character has made it to the next level
      */
     public void nextLevel() {
+        //update level
         iSeconds = 0;
         iPoints = 0;
+        iMaxPoints += 500;
         if (iLevel < 3){
             iLevel++;
             iVelocity+=2;
@@ -450,6 +482,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                                                                                    (this.getClass().getResource("backLevel" + (iLevel+1) 
                                                                                            + ".jpg")));
         }
+        // turn of when is final level
         if (iLevel == 3) {
             bNextLevel = false;
         }
@@ -483,6 +516,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         //Update the foreground images
         graApplet.setColor(getForeground());
         
+        // paint intro when intro counter is < 1
         if (iIntro < 1) {
             paintIntro(graApplet);
         }
@@ -491,14 +525,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             paint1(graApplet);
         }
         
+        // paint next level
         else if (bNextLevel) {
             paintNextLevel(graApplet);
             
+            //delay
             if (iSeconds >= 150) {
                 bNextLevel = false;
             }
         }
         
+        // paint game over
         else if (bGameOver) {
             paintGameOver(graApplet);
         }
@@ -516,15 +553,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * @param graGraphic
      **/
     public void paint1 (Graphics graGraphic){
+        // paint backgrounds
         gzmBack1.paint(graGraphic, this);
         gzmBack2.paint(graGraphic, this);
         
         //paint main character
         if(!bJump){
-            ctrMan[iLevel].paint(graGraphic, this);
+            arrCtrMan[iLevel].paint(graGraphic, this);
         }
+        //pant jumping man
         else{
-            ctrMan[iLevel].paintJump(graGraphic, this);
+            arrCtrMan[iLevel].paintJump(graGraphic, this);
         }
         
         for(Object objGizmo: lklGizmos[iLevel]) {
@@ -532,6 +571,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             //paint gizmos
             gGizmo.paint(graGraphic, this);
         }
+        
+        // paint pause
         if (bPause) {
             paintPause(graApplet);
         }
@@ -561,9 +602,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     }
     
     public void playMusic (){
-        
+        // play music
         auSoundTrack.play();
-        
     }
     
     public void paintIntro (Graphics graGraphic){
@@ -574,11 +614,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     }
     
     public void paintGameOver (Graphics graGraphic) {
-            graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
-                                    (this.getClass().getResource("gameover.jpg")),0,0,this);
-            graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 72));
-            graGraphic.setColor(Color.white);
-            graGraphic.drawString("Puntos: " + iPoints, 500, 350);
+        //paint game over
+        graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
+                                (this.getClass().getResource("gameover.jpg")),0,0,this);
+        graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 72));
+        graGraphic.setColor(Color.white);
+        graGraphic.drawString("Puntos: " + iPoints, 500, 350);
     }
     
     public void paintPause (Graphics graGraphic) {
@@ -606,24 +647,28 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * In this method we answer to the user's released key
      **/
     public void keyReleased(KeyEvent e) {
+        // move trough manu
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             iIntro++;
         }
+        //jumping character
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             if(!bPause){
                 bJump = true;
                 jump();
             }
         }
+        //set pause
         if (e.getKeyCode() == KeyEvent.VK_P) {
             bPause = !bPause;
         }
     }
     
     public void jump() {
-        if(ctrMan[iLevel].getY() == 400 ){
-            ctrMan[iLevel].setdVelocity(24);
-            ctrMan[iLevel].setY(ctrMan[iLevel].getY() - ctrMan[iLevel].getdVelocity());
+        //jumping
+        if(arrCtrMan[iLevel].getY() == 400 ){
+            arrCtrMan[iLevel].setdVelocity(24);
+            arrCtrMan[iLevel].setY(arrCtrMan[iLevel].getY() - arrCtrMan[iLevel].getdVelocity());
         }
     }
     
