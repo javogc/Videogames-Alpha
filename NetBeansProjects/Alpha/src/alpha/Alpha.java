@@ -1,5 +1,7 @@
 package alpha;
 
+import java.applet.AudioClip;
+import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -7,6 +9,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,12 +54,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private boolean bPoints;
     private boolean bNextLevel;
+    private boolean bMusica;
     private boolean bJump;
     private boolean bPause;
     private boolean bGameOver;
+
     
     private Image imgApplet;
     private Graphics graApplet;
+    
+    private AudioClip auSoundTrack;
+    private AudioClip auPoint;
     
     /**
      *
@@ -91,6 +99,19 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         bGameOver = false;
         initImages();
         addKeyListener(this);
+        
+        
+        
+        //Cargar sonido del juego
+        
+        URL URLSoundTrack = this.getClass().getResource("soundtrack.wav");
+        
+        auSoundTrack =  Applet.newAudioClip(URLSoundTrack);
+        
+        
+        URL URLPoints = this.getClass().getResource("points.wav");
+        auPoint = Applet.newAudioClip(URLPoints);
+                
     }
     
     /**
@@ -186,9 +207,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             iNewX = 700;
             
             for (int iJ = 0; iJ < 5; iJ++) {
+                if(iI == 1){
+                    gzm1 = new Gizmos (iNewX, 375, 200, 125, 
+                            Toolkit.getDefaultToolkit().getImage
+                          (this.getClass().getResource("gizmoLevel2-1.png")), -100);
+                }
+                else {
                 gzm1 = new Gizmos (iNewX, 375, 200, 200,
                         Toolkit.getDefaultToolkit().getImage
                                                     (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100);
+                }
+                
                 
                 iNewX += 700;
                 
@@ -247,6 +276,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         Thread th = new Thread (this);
         //Start thread
         th.start ();
+        
     }
     
     @Override
@@ -261,32 +291,45 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         actualTime = System.currentTimeMillis();
         l_actualTime = System.currentTimeMillis();
         while (true) {
-                l_elapsedTime = System.currentTimeMillis() - l_actualTime;
-                l_elapsedTime /= 1000;
-
-                if (iIntro == 0) {
-                    updateIntro();
+            l_elapsedTime = System.currentTimeMillis() - l_actualTime;
+            l_elapsedTime /= 1000;
+            
+            if (iIntro == 0) {
+                updateIntro();
+            }
+            
+            if (iIntro > 3) {
+                updateBackground();
+                
+                if (!bMusica){
+                    
+                    bMusica = true;
+                    playMusic();
                 }
-
-                if (iIntro > 3) {
-                    updateBackground();
-
-                    if (!bNextLevel && !bPause && !bGameOver) {
-                        updateCharacters();
-                        collision();
-                    }
+                if (!bNextLevel && !bPause && !bGameOver) {
+                    updateCharacters();
+                    collision();
                 }
-                repaint();
+            }
+                            repaint();
                 try {
                     //The thread sleeps
                     Thread.sleep (20);
-                }
-                catch (InterruptedException iexError) {
-                    System.out.println("Hubo un error en el juego " +
-                            iexError.toString());
-                }
-            }
+        }
+                    catch (InterruptedException iexError) {
+                    System.out.println("Hubo un error en el juego " + iexError.toString());
+                                }
+        }
+
     }
+
+   /**
+     * updateIntro
+     *
+     * Method <I>updateIntro</I><P>
+     * In this method the intro images are updated. It's an indefinite cycle
+     * that repaints the objects that are shown on screen.
+     **/
     public void updateIntro() {       
         //update main character's animation
         long elapsedTime = System.currentTimeMillis() - actualTime;
@@ -367,6 +410,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(ctrMan[iLevel].intersecta(gGizmo)){
                 addPoints(gGizmo);
+                auPoint.play();
                 gGizmo.setX(iNewX);
                 iNewX2 += 300;
             }
@@ -505,6 +549,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 , 70, 210, this);
     }
     
+    public void playMusic (){
+        
+        auSoundTrack.play();
+        
+    }
+    
     public void paintIntro (Graphics graGraphic){
         if (iIntro > 0) {
         //draws the intro image according to the intro phase
@@ -579,4 +629,6 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         Alpha game = new Alpha();
         game.setVisible(true);
     }
+
+
 }
