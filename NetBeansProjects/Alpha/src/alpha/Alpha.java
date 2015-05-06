@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Random;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
@@ -35,6 +36,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     private Gizmos gzmBack1;
     private Gizmos gzmBack2;
     
+    private Animation aniIntro;
+    
     private int iIntro;
     private int iLevel;
     private int iTemp;
@@ -52,6 +55,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     private boolean bPoints;
     private boolean bNextLevel;
     private boolean bMusica;
+    private boolean bJump;
+
     
     private Image imgApplet;
     private Graphics graApplet;
@@ -87,6 +92,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         dAcceleration = 0.2;
         bPoints = false;
         bNextLevel = false;
+        bJump = false;
         initImages();
         addKeyListener(this);
         
@@ -114,6 +120,21 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         Image imgBackground = Toolkit.getDefaultToolkit().getImage
                                 (this.getClass().getResource ("backLevel1.jpg"));
         
+        aniIntro = new Animation();
+        Image imgIntro;
+        
+        for (int iI = 0; iI < 10; iI++) {
+            imgIntro = Toolkit.getDefaultToolkit().getImage
+                                (this.getClass().getResource ("Logo_0000" + (iI) + ".jpg"));
+            aniIntro.sumaCuadro(imgIntro, 100);
+        }
+        
+        for (int iI = 10; iI < 60; iI++) {
+            imgIntro = Toolkit.getDefaultToolkit().getImage
+                                (this.getClass().getResource ("Logo_000" + (iI) + ".jpg"));
+            aniIntro.sumaCuadro(imgIntro, 100);
+        }
+        
         //load background image to gizmos
         gzmBack1 = new Gizmos(0, 0, 4868, 900, imgBackground, 0);
         gzmBack2 = new Gizmos(4868, 0, 4868, 900, imgBackground, 0);
@@ -121,6 +142,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         //loading images for the animation of the main character
         Image [][] imgMan = new Image [4][8];
         Animation [] aniMan = new Animation[4];
+        Image [] imgJump = new Image [4];
         
         for (int iI = 0; iI < 4; iI++) {
             aniMan[iI] = new Animation();
@@ -134,11 +156,15 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 aniMan[iI].sumaCuadro(imgMan[iI][iJ], 100);
             }
         }
+        for (int iI = 0; iI < 4; iI++){
+            imgJump[iI] = Toolkit.getDefaultToolkit().getImage
+                                (this.getClass().getResource ("jumpLevel" + (iI+1) + ".png"));
+        }
         
         //creating the main characters for each level
         ctrMan = new Character [4];
         for (int iI = 0; iI < 4; iI++) {
-            ctrMan[iI] = new Character (50, 400, 100, 100, aniMan[iI], 9, 0);
+            ctrMan[iI] = new Character (50, 400, 100, 100, aniMan[iI], 9, 0, imgJump[iI]);
         }
         
         //loading images of the Gizmos, these include obstacles & tokens
@@ -264,7 +290,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             l_elapsedTime = System.currentTimeMillis() - l_actualTime;
             l_elapsedTime /= 1000;
             
-                        
+            if (iIntro == 0) {
+                updateIntro();
+            }
+            
             if (iIntro > 3) {
                 updateBackground();
                 
@@ -290,6 +319,13 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         }
     }
     
+    public void updateIntro() {       
+        //update main character's animation
+        long elapsedTime = System.currentTimeMillis() - actualTime;
+        actualTime += elapsedTime;
+        aniIntro.actualiza(elapsedTime);
+    }
+    
     /**
      * update
      *
@@ -312,6 +348,9 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         if(ctrMan[iLevel].getY() < 400) {
             ctrMan[iLevel].setdVelocity(ctrMan[iLevel].getdVelocity() - 1);
             ctrMan[iLevel].setY(ctrMan[iLevel].getY() - ctrMan[iLevel].getdVelocity());
+        }
+        else{
+            bJump = false;
         }
     }
     
@@ -456,8 +495,12 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         gzmBack2.paint(graGraphic, this);
         
         //paint main character
-        ctrMan[iLevel].paint(graGraphic, this);
-       
+        if(!bJump){
+            ctrMan[iLevel].paint(graGraphic, this);
+        }
+        else{
+            ctrMan[iLevel].paintJump(graGraphic, this);
+        }
         
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
@@ -487,10 +530,15 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     }
     
     public void paintIntro (Graphics graGraphic){
+        if (iIntro > 0) {
         //draws the intro image according to the intro phase
         graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
                                 (this.getClass().getResource("intro" + (iIntro+1) + ".png"))
                 , 0, 0, this);
+        }
+        else {
+            graGraphic.drawImage(aniIntro.getImagen(), 0, 0, this);
+        }
     }
     
     @Override
@@ -514,6 +562,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             iIntro++;
         }
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                bJump = true;
                 jump();
         }
     }
