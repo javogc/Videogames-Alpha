@@ -560,6 +560,14 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         graGraphic.drawString("Puntos: " + iPoints, 675, 50);
     }
     
+    /**
+     * paintInstructions
+     *
+     * Method <I>paintInstrucciones</I>.<P>
+     * In this method the objects shown on screen are painted according
+     * to some conditions
+     * @param graGraphic
+     **/
     public void paintInstructions(Graphics graGraphic) {
         iSeconds++;
         graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 30));
@@ -567,6 +575,14 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         graGraphic.drawString("Click SPACE to jump, don't harm the environment!", 100, 670);
     }
     
+   /**
+     * paintNextLeve
+     *
+     * Method <I>paintNextLevel</I>.<P>
+     * In this method the objects shown on screen are painted according
+     * to some conditions
+     * @param graGraphic
+     **/    
     public void paintNextLevel (Graphics graGraphic) {
         iSeconds++;
         gzmBack1.paint(graGraphic, this);
@@ -577,18 +593,40 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 , 70, 210, this);
     }
     
+    /**
+     * playMusic
+     *
+     * Method <I>playMusic</I>.<P>
+     * In this method the sounds are played
+     * @param graGraphic
+     **/    
     public void playMusic (){
         // play music
         auSoundTrack.play();
     }
     
+    /**
+     * paintIntro
+     *
+     * Method <I>paintIntro</I>.<P>
+     * In this method the objects shown on screen are painted according
+     * to some conditions
+     * @param graGraphic
+     **/    
     public void paintIntro (Graphics graGraphic){
             graGraphic.drawImage(aniIntro.getImagen(), 0, 0, this);
             graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 30));
             graGraphic.setColor(Color.black);
             graGraphic.drawString("Click ENTER", 800, 670);
     }
-    
+    /**
+     * paintGameOver
+     *
+     * Method <I>paintGameOver</I>.<P>
+     * In this method the objects shown on screen are painted according
+     * to some conditions
+     * @param graGraphic
+     **/    
     public void paintGameOver (Graphics graGraphic) {
         //paint game over
         graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
@@ -597,7 +635,15 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         graGraphic.setColor(Color.white);
         graGraphic.drawString("Puntos: " + iPoints, 500, 350);
     }
-    
+
+    /**
+     * paintPause
+     *
+     * Method <I>painPause</I>.<P>
+     * In this method the objects shown on screen are painted according
+     * to some conditions
+     * @param graGraphic
+     **/    
     public void paintPause (Graphics graGraphic) {
         if(bPause) {
             graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 72));
@@ -638,8 +684,26 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_P) {
             bPause = !bPause;
         }
+        //Replay
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            if (bGameOver) {
+                bGameOver = false;
+                iMaxPoints = 400;
+                iVelocity = 10;
+                iSeconds =0;
+                iLevel = 0;
+                iPoints = 0;
+                initImages();
+               }
+        }
     }
-    
+
+    /**
+     * jump
+     *
+     * Method <I>jump</I>.<P>
+     * In this method the character is abel to jump
+     **/    
     public void jump() {
         //jumping
         if(arrCtrMan[iLevel].getY() == 400 ){
