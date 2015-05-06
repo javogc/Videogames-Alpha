@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Random;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 /**
@@ -40,11 +39,11 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     
     private int iIntro;
     private int iLevel;
-    private int iTemp; 
     private int iYTemp;
     private int iPoints;
     private int iVelocity;
     private int iSeconds;
+    private int iMaxPoints;
     
     private double dAcceleration;
     
@@ -56,6 +55,8 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     private boolean bNextLevel;
     private boolean bMusica;
     private boolean bJump;
+    private boolean bPause;
+    private boolean bGameOver;
 
     
     private Image imgApplet;
@@ -85,14 +86,16 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
         setSize (1000, 700);
         iIntro = 0;
         iLevel = 0;
-        iTemp = 0;
         iPoints = 0;
         iSeconds = 0;
         iVelocity = 10;
+        iMaxPoints = 400;
         dAcceleration = 0.2;
         bPoints = false;
         bNextLevel = false;
         bJump = false;
+        bPause  = false;
+        bGameOver = false;
         initImages();
         addKeyListener(this);
         
@@ -188,34 +191,28 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             }
         }
         
-        Random r = new Random();
-        int Low = 10;
-        int High = 100;
-        int R = 50;
-        
-        int iNewX = 700;
+        int minimum = 1000, maximum = 3000, iTemp = 0;
+        int randNum = 0;
         
         lklGizmos = new LinkedList [4];
         Gizmos gzm1, gzm2;
         
-        for (int iI = 0; iI < 4; iI++) {
-            
-            iNewX = 700;
-            
+        for (int iI = 0; iI < 4; iI++) {    
+            iTemp = randNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                iTemp = randNum;
                 if(iI == 1){
-                    gzm1 = new Gizmos (iNewX, 375, 200, 125, 
+                    gzm1 = new Gizmos (randNum, 375, 200, 125, 
                             Toolkit.getDefaultToolkit().getImage
                           (this.getClass().getResource("gizmoLevel2-1.png")), -100);
                 }
                 else {
-                gzm1 = new Gizmos (iNewX, 375, 200, 200,
+                gzm1 = new Gizmos (randNum, 375, 200, 200,
                         Toolkit.getDefaultToolkit().getImage
                                                     (this.getClass().getResource("gizmoLevel" + (iI+1) + "-1.png")), -100);
                 }
                 
-                
-                iNewX += 700;
                 
                 if (lklGizmos[iI] == null) {
                     lklGizmos[iI] = new LinkedList<Gizmos>();
@@ -223,36 +220,33 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 
                 lklGizmos[iI].add(gzm1);
             }
-            
-            iNewX = 100;
-            
+            iTemp = randNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
+                iTemp = (int)lklGizmos[iI].get(iJ).getX();
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
                 if(iI == 2) {
-                gzm2 = new Gizmos (iNewX, 200, 100, 100,
+                gzm2 = new Gizmos (randNum, 200, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
                 }
                 else {
-                    gzm2 = new Gizmos (iNewX, 475, 100, 100,
+                    gzm2 = new Gizmos (randNum, 475, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
                                             (this.getClass().getResource("gizmoLevel" + (iI+1) + "-2.png")), 100);
                 }
-                
-                iNewX += 700;
                 
                 lklGizmos[iI].add(gzm2);
             }
         }
         
         for (int iI = 2; iI < 5; iI++) {
-            
+            iTemp = randNum = 0;
             for (int iJ = 0; iJ < 5; iJ++) {
-                gzm2 = new Gizmos (iNewX, 475, 100, 100,
+                iTemp = randNum;
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                gzm2 = new Gizmos (randNum, 475, 100, 100,
                         Toolkit.getDefaultToolkit().getImage
-                                            (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100);
-                
-                iNewX += 700;
-                
+                                            (this.getClass().getResource("gizmoLevel4-"+ (iI+1) + ".png")), 100);        
                 lklGizmos[3].add(gzm2);
             }
             }
@@ -294,31 +288,37 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
                 updateIntro();
             }
             
-            if (iIntro > 3) {
+            if (iIntro > 0) {
                 updateBackground();
                 
                 if (!bMusica){
-                    
                     bMusica = true;
                     playMusic();
                 }
-                if (!bNextLevel) {
+                if (!bNextLevel && !bPause && !bGameOver) {
                     updateCharacters();
                     collision();
                 }
             }
-            repaint();
-            try {
-                //The thread sleeps
-                Thread.sleep (20);
-            }
-            catch (InterruptedException iexError) {
-                System.out.println("Hubo un error en el juego " +
-                        iexError.toString());
-            }
+                            repaint();
+                try {
+                    //The thread sleeps
+                    Thread.sleep (20);
         }
+                    catch (InterruptedException iexError) {
+                    System.out.println("Hubo un error en el juego " + iexError.toString());
+                                }
+        }
+
     }
-    
+
+   /**
+     * updateIntro
+     *
+     * Method <I>updateIntro</I><P>
+     * In this method the intro images are updated. It's an indefinite cycle
+     * that repaints the objects that are shown on screen.
+     **/
     public void updateIntro() {       
         //update main character's animation
         long elapsedTime = System.currentTimeMillis() - actualTime;
@@ -361,15 +361,17 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      */
     public void updateBackground() {
         //move background
-        gzmBack1.setX(gzmBack1.getX() - iVelocity);
-        gzmBack2.setX(gzmBack2.getX() - iVelocity);
-        
-        if(gzmBack1.getX() + gzmBack1.getWidth() < 0){
-            gzmBack1.setX(gzmBack1.getWidth()-4);
-        }
-        
-        if(gzmBack2.getX() + gzmBack2.getWidth() < 0){
-            gzmBack2.setX(gzmBack1.getWidth()-4);
+        if (!bPause){
+            gzmBack1.setX(gzmBack1.getX() - iVelocity);
+            gzmBack2.setX(gzmBack2.getX() - iVelocity);
+
+            if(gzmBack1.getX() + gzmBack1.getWidth() < 0){
+                gzmBack1.setX(gzmBack1.getWidth()-4);
+            }
+
+            if(gzmBack2.getX() + gzmBack2.getWidth() < 0){
+                gzmBack2.setX(gzmBack1.getWidth()-4);
+            }
         }
     }
     
@@ -379,30 +381,36 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * Method <I>collision</I>
      **/
     public void collision() {
-        int iNewX = this.getWidth() + 100;
+        int iTemp = 0, randNum, minimum, maximum;
+        minimum = 1000;
+        maximum = 3000;
         
         //update gizmos x-position
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(gGizmo.getX() + gGizmo.getWidth() < 0){
-                gGizmo.setX(iNewX);
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                iTemp = randNum;
+                gGizmo.setX(randNum);
             }
-            iNewX += 300;
         }
         
-        int iNewX2 = this.getWidth() + 100;
+        iTemp = 0;
         
         //add points to user according to the item he/she collided with
         for(Object objGizmo: lklGizmos[iLevel]) {
             Gizmos gGizmo = (Gizmos) objGizmo;
             if(ctrMan[iLevel].intersecta(gGizmo)){
                 addPoints(gGizmo);
+                if(iPoints < -500) {
+                    bGameOver = true;
+                }
+                randNum = minimum + (int)(Math.random()*maximum) + iTemp;
+                iTemp = randNum;
+                gGizmo.setX(randNum);
                 auPoint.play();
-                gGizmo.setX(iNewX);
-                iNewX2 += 300;
             }
         }
-        
     }
     
     /**
@@ -415,7 +423,7 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      */
     public void addPoints (Gizmos gGizmo) {
         iPoints += gGizmo.getPoints();
-        if (iPoints >= 300 && !bNextLevel) {
+        if (iPoints >= 400 && (iLevel < 3)) {
             bNextLevel = true;
             nextLevel();
         }
@@ -427,16 +435,21 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
      * Method <I> nextLevel </I> if called when the character has made it to the next level
      */
     public void nextLevel() {
-        iLevel++;
         iSeconds = 0;
         iPoints = 0;
-        
-        gzmBack1.setImagen(Toolkit.getDefaultToolkit().getImage
-                                                                                (this.getClass().getResource("backLevel" + (iLevel+1)
-                                                                                        + ".jpg")));
-        gzmBack2.setImagen(Toolkit.getDefaultToolkit().getImage
-                                                                               (this.getClass().getResource("backLevel" + (iLevel+1) 
-                                                                                       + ".jpg")));
+        if (iLevel < 3){
+            iLevel++;
+            iVelocity+=2;
+            gzmBack1.setImagen(Toolkit.getDefaultToolkit().getImage
+                                                                                    (this.getClass().getResource("backLevel" + (iLevel+1)
+                                                                                            + ".jpg")));
+            gzmBack2.setImagen(Toolkit.getDefaultToolkit().getImage
+                                                                                   (this.getClass().getResource("backLevel" + (iLevel+1) 
+                                                                                           + ".jpg")));
+        }
+        if (iLevel == 3) {
+            bNextLevel = false;
+        }
     }
     
     @Override
@@ -455,18 +468,23 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             graApplet = imgApplet.getGraphics ();
         }
         
+        if(iIntro < 1) {
         //Update the background image
-        graApplet.setColor(Color.BLACK);
+        graApplet.setColor(Color.WHITE);
+        }
+        else {
+            graApplet.setColor(Color.BLACK);
+        }
         graApplet.fillRect(0, 0, this.getSize().width, this.getSize().height);
         
         //Update the foreground images
         graApplet.setColor(getForeground());
         
-        if (iIntro < 4) {
+        if (iIntro < 1) {
             paintIntro(graApplet);
         }
         
-        else if (!bNextLevel) {
+        else if (iIntro >= 1 && !bNextLevel && !bGameOver) {
             paint1(graApplet);
         }
         
@@ -476,6 +494,10 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             if (iSeconds >= 150) {
                 bNextLevel = false;
             }
+        }
+        
+        else if (bGameOver) {
+            paintGameOver(graApplet);
         }
         
         //Paint updated images
@@ -507,13 +529,25 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             //paint gizmos
             gGizmo.paint(graGraphic, this);
         }
-        
+        if (bPause) {
+            paintPause(graApplet);
+        }
+        if(iLevel == 0 && iSeconds < 200) {
+            paintInstructions(graApplet);
+        }
         graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 24));
         graGraphic.setColor(Color.white);
         graGraphic.drawString("Puntos: " + iPoints, 675, 50);
     }
     
-    public void paintNextLevel (Graphics graGraphic){
+    public void paintInstructions(Graphics graGraphic) {
+        iSeconds++;
+        graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 30));
+        graGraphic.setColor(Color.white);
+        graGraphic.drawString("Click SPACE to jump, don't harm the environment!", 100, 670);
+    }
+    
+    public void paintNextLevel (Graphics graGraphic) {
         iSeconds++;
         gzmBack1.paint(graGraphic, this);
         gzmBack2.paint(graGraphic, this);
@@ -530,14 +564,25 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
     }
     
     public void paintIntro (Graphics graGraphic){
-        if (iIntro > 0) {
-        //draws the intro image according to the intro phase
-        graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
-                                (this.getClass().getResource("intro" + (iIntro+1) + ".png"))
-                , 0, 0, this);
-        }
-        else {
             graGraphic.drawImage(aniIntro.getImagen(), 0, 0, this);
+            graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 30));
+            graGraphic.setColor(Color.black);
+            graGraphic.drawString("Click ENTER", 800, 670);
+    }
+    
+    public void paintGameOver (Graphics graGraphic) {
+            graGraphic.drawImage(Toolkit.getDefaultToolkit().getImage
+                                    (this.getClass().getResource("gameover.jpg")),0,0,this);
+            graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 72));
+            graGraphic.setColor(Color.white);
+            graGraphic.drawString("Puntos: " + iPoints, 500, 350);
+    }
+    
+    public void paintPause (Graphics graGraphic) {
+        if(bPause) {
+            graGraphic.setFont(new Font ("Helvetica", Font.PLAIN, 72));
+            graGraphic.setColor(Color.white);
+            graGraphic.drawString("PAUSA", 500, 350);
         }
     }
     
@@ -562,8 +607,13 @@ public final class Alpha extends JFrame implements Runnable, KeyListener {
             iIntro++;
         }
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if(!bPause){
                 bJump = true;
                 jump();
+            }
+        }
+        if (e.getKeyCode() == KeyEvent.VK_P) {
+            bPause = !bPause;
         }
     }
     
